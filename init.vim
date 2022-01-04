@@ -28,6 +28,7 @@ call plug#begin('~/.config/nvim/plugins')
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     Plug 'mattn/emmet-vim'
+    Plug 'unblevable/quick-scope'
 call plug#end()
 
 
@@ -111,6 +112,7 @@ inoremap ( ()<esc>i
 inoremap [ []<esc>i
 inoremap ' ''<esc>i
 inoremap " ""<esc>i
+
 
 " Toggle File Explorer
 function ToggleNetrw()
