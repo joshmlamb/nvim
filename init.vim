@@ -1,4 +1,47 @@
-let mapleader = " "
+let g:dashboard_custom_header = [
+    \'',
+    \'',
+    \'',
+    \'',
+    \'',
+    \'',
+    \' ________  _______  _________        _________  ________          ___       __   ________  ________  ___  __        ',
+    \'|\   ____\|\  ___ \|\___   ___\     |\___   ___\\   __  \        |\  \     |\  \|\   __  \|\   __  \|\  \|\  \      ',
+    \'\ \  \___|\ \   __/\|___ \  \_|     \|___ \  \_\ \  \|\  \       \ \  \    \ \  \ \  \|\  \ \  \|\  \ \  \/  /|_    ',
+    \' \ \  \  __\ \  \_|/__  \ \  \           \ \  \ \ \  \\\  \       \ \  \  __\ \  \ \  \\\  \ \   _  _\ \   ___  \   ',
+    \'  \ \  \|\  \ \  \_|\ \  \ \  \           \ \  \ \ \  \\\  \       \ \  \|\__\_\  \ \  \\\  \ \  \\  \\ \  \\ \  \  ',
+    \'   \ \_______\ \_______\  \ \__\           \ \__\ \ \_______\       \ \____________\ \_______\ \__\\ _\\ \__\\ \__\ ',
+    \'    \|_______|\|_______|   \|__|            \|__|  \|_______|        \|____________|\|_______|\|__|\|__|\|__| \|__| ',
+    \'',
+    \'',
+    \'',
+    \'',
+    \'',
+    \'',
+\]
+let g:dashboard_custom_section={
+\   '1': {
+\      'description': ['  Find Files                                    SPC f'],
+\      'command': 'Files'
+\   },
+\   '2': {
+\      'description': ['  Search Project                              SPC s p'],
+\      'command': 'Rg'
+\   },
+\   '3': {
+\      'description': ['פּ  Explore                                       SPC e'],
+\      'command': 'call ToggleNetrw()'
+\   },
+\   '4': {
+\      'description': ['ﮮ  Update Plugins                              SPC p u'],
+\      'command': 'PlugUpdate'
+\   },
+\   '5': {
+\      'description': ['  Edit Config                                 SPC c e'],
+\      'command': 'e ~/.config/nvim/init.vim'
+\   },
+\}
+let g:dashboard_default_executive = 'fzf'
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
@@ -19,16 +62,21 @@ let g:comment_strings = {
 \}
 let g:polyglot_disabled = ['autoindent', 'sensible']
 let g:coc_global_extensions = ['coc-css', 'coc-emmet', 'coc-html', 'coc-json', 'coc-snippets', 'coc-svelte', 'coc-tailwindcss', 'coc-tsserver', 'coc-vimlsp', 'coc-vetur', 'coc-yaml']
+let mapleader = " "
 
 
 call plug#begin('~/.config/nvim/plugins')
+    Plug 'editorconfig/editorconfig-vim'
     Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+    Plug 'glepnir/dashboard-nvim'
+    Plug 'mhinz/vim-signify'
     Plug 'sheerun/vim-polyglot'
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     Plug 'mattn/emmet-vim'
     Plug 'unblevable/quick-scope'
+    Plug 'tpope/vim-surround'
 call plug#end()
 
 
@@ -59,7 +107,10 @@ endif
 
 
 " Maps
-nnoremap <leader>rc :source ~/.config/nvim/init.vim<CR>
+nnoremap <leader>ce :e ~/.config/nvim/init.vim<CR>
+nnoremap <leader>cr :source ~/.config/nvim/init.vim<CR>
+nnoremap <leader>pu :PlugUpdate<CR>
+nnoremap <leader>pc :PlugClean<CR>
 nnoremap <leader>h :help<space>
 nnoremap <leader>cl :setlocal cursorcolumn! cursorline!<CR>
 nnoremap <CR> :noh<CR><CR>
@@ -91,6 +142,11 @@ inoremap <silent><expr> <TAB>
 \   <SID>check_back_space() ? "\<TAB>" :
 \   coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 nnoremap Y y$
 nnoremap n nzzzv
