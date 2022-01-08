@@ -59,6 +59,7 @@ let g:comment_strings = {
 \    'liquid': ['{% comment %}', '{% endcomment %}'],
 \    'twig': ['{#', '#}'],
 \    'blade': ['{{--', '--}}'],
+\    'elm': ['--', '{-', '-}']
 \}
 let g:polyglot_disabled = ['autoindent', 'sensible']
 let g:coc_global_extensions = ['coc-css', 'coc-emmet', 'coc-html', 'coc-json', 'coc-snippets', 'coc-svelte', 'coc-tailwindcss', 'coc-tsserver', 'coc-vimlsp', 'coc-vetur', 'coc-yaml']
