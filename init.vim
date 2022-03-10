@@ -42,14 +42,10 @@ let g:dashboard_custom_section={
 \   },
 \}
 let g:dashboard_default_executive = 'fzf'
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_winsize = 25
 let g:comment_strings = {
 \    'sh': ['# '],
 \    'zsh': ['# '],
+\    'yaml': ['# '],
 \    'vim': ['" '],
 \    'html': ['<!--', '-->'],
 \    'vue': ['//', '<!--', '-->'],
@@ -57,18 +53,17 @@ let g:comment_strings = {
 \    'scss': ['/*', '*/'],
 \    'javascript': ['//', '{/*', '*/}'],
 \    'liquid': ['{% comment %}', '{% endcomment %}'],
-\    'twig': ['{#', '#}'],
+\    'html.twig': ['{#', '#}'],
 \    'blade': ['{{--', '--}}'],
-\    'elm': ['--', '{-', '-}']
 \}
-let g:polyglot_disabled = ['autoindent', 'sensible']
-let g:coc_global_extensions = ['coc-css', 'coc-emmet', 'coc-html', 'coc-json', 'coc-snippets', 'coc-svelte', 'coc-tailwindcss', 'coc-tsserver', 'coc-vimlsp', 'coc-vetur', 'coc-yaml']
+let g:polyglot_disabled = ['autoindent']
+let g:coc_global_extensions = ['coc-css', 'coc-emmet', 'coc-html', 'coc-json', 'coc-snippets', 'coc-svelte', 'coc-tailwindcss', 'coc-tsserver', 'coc-vimlsp', 'coc-vetur', 'coc-yaml', 'coc-react-refactor']
 let mapleader = " "
 
 
 call plug#begin('~/.config/nvim/plugins')
     Plug 'editorconfig/editorconfig-vim'
-    Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+    Plug 'sainnhe/everforest'
     Plug 'glepnir/dashboard-nvim'
     Plug 'mhinz/vim-signify'
     Plug 'sheerun/vim-polyglot'
@@ -78,10 +73,13 @@ call plug#begin('~/.config/nvim/plugins')
     Plug 'mattn/emmet-vim'
     Plug 'unblevable/quick-scope'
     Plug 'tpope/vim-surround'
+    Plug 'lambdalisue/fern.vim'
 call plug#end()
 
 
-colorscheme tokyonight
+set termguicolors
+set background=dark
+colorscheme everforest
 set clipboard+=unnamed
 set path+=**
 set wildignore+=**/node_modules/**,**/.git/**
@@ -91,16 +89,15 @@ set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set expandtab
+set ignorecase
+set listchars=trail:·
+set list
 set scrolloff=8
 set colorcolumn=80
 set nobackup
 set nowb
 set noswapfile
 set completeopt+=menu,menuone,noinsert,noselect
-
-if executable("fzf")
-    set rtp+=~/.fzf
-endif
 
 if executable("rg")
     set grepprg=rg\ --vimgrep\ --no-heading
@@ -115,13 +112,15 @@ nnoremap <leader>pc :PlugClean<CR>
 nnoremap <leader>h :help<space>
 nnoremap <leader>cl :setlocal cursorcolumn! cursorline!<CR>
 nnoremap <CR> :noh<CR><CR>
-"noremap <up> <nop>
-"noremap <down> <nop>
-"noremap <left> <nop>
-"noremap <right> <nop>
 
 if executable("fzf")
-    nnoremap <leader>f :GFiles<CR>
+    silent! !git rev-parse --is-inside-work-tree
+    if v:shell_error == 0
+        nnoremap <leader>f :GFiles<CR>
+    else
+        nnoremap <leader>f :Files<CR>
+    endif
+
     nnoremap <leader>af :Files<CR>
     nnoremap <leader>b :Buffers<CR>
 else
@@ -138,6 +137,11 @@ endif
 nnoremap <leader>cb :bd<CR>
 nnoremap <leader>cB :%bd\|e#\|bd#<CR>
 
+nnoremap <C-s> :vsplit<CR>
+nnoremap <leader>cs :only<CR>
+
+nnoremap <leader>e :Fern . -drawer -toggle -reveal=%<CR>
+
 inoremap <silent><expr> <TAB>
 \   pumvisible() ? "\<C-n>" :
 \   <SID>check_back_space() ? "\<TAB>" :
@@ -145,9 +149,17 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 nnoremap Y y$
 nnoremap n nzzzv
@@ -170,16 +182,7 @@ inoremap [ []<esc>i
 inoremap ' ''<esc>i
 inoremap " ""<esc>i
 
-
-" Toggle File Explorer
-function ToggleNetrw()
-    if exists("g:netrw_buffer") && bufexists(g:netrw_buffer)
-        exe "bd".g:netrw_buffer | unlet g:netrw_buffer
-    else
-        Vexplore | let g:netrw_buffer=bufnr("%")
-    endif
-endfunction
-nnoremap <leader>e :call ToggleNetrw()<CR>
+autocmd BufNewFile,BufRead *.pcss set filetype=css
 
 
 " Comment Helper

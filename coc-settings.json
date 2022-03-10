@@ -7,5 +7,6 @@
         }
     },
     "codeLens.enable": true,
-    "tailwindCSS.headwind.runOnSave": false
+    "tailwindCSS.headwind.runOnSave": false,
+    "svelte.enable-ts-plugin": true
 }
